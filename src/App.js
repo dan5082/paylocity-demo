@@ -72,9 +72,7 @@ function App() {
               >
                 Add Dependent
               </button>
-              <button type="button" onClick={() => pop('dependents')}>
-                Remove Dependent
-              </button>
+
                 <button
                   type="button"
                   onClick={form.reset}
@@ -102,10 +100,10 @@ function App() {
 
                 <Table.Body>
                   {
-                    Object.keys(CalculateYearlyDeduction(values)).filter(name => name !== "TOTAL_COST").map(name => (
+                    CalculateYearlyDeduction(values).filter(name => Object.keys(name)[0] !== "TOTAL_COST").map(name => (
                     <Table.Row>
-                      <Table.Cell>{name}</Table.Cell>
-                      <Table.Cell>${CalculateYearlyDeduction(values)[name].toFixed(2)}</Table.Cell>
+                      <Table.Cell>{Object.keys(name)[0]}</Table.Cell>
+                      <Table.Cell>${name[Object.keys(name)[0]].toFixed(2)}</Table.Cell>
                     </Table.Row>
                   )
                   )}
@@ -115,7 +113,7 @@ function App() {
                   <Table.Row>
                     <Table.HeaderCell/>
                     <Table.HeaderCell colSpan='1'>
-                    <Table.Cell>Total Cost: ${CalculateYearlyDeduction(values)["TOTAL_COST"].toFixed(2)}</Table.Cell>
+                    <Table.Cell>Total Cost: ${CalculateYearlyDeduction(values).filter(name => Object.keys(name)[0] === "TOTAL_COST")[0]["TOTAL_COST"]}</Table.Cell>
                     </Table.HeaderCell>
                   </Table.Row>
                 </Table.Footer>
@@ -139,7 +137,7 @@ function App() {
                 </Table.Header>
                 <Table.Body>
                   {
-                    CalculatePayPeriods(26,CalculateYearlyDeduction(values)["TOTAL_COST"].toFixed(2))
+                    CalculatePayPeriods(26,values)
                     .map((deduct, period) => (
 
                     <Table.Row>
@@ -156,7 +154,7 @@ function App() {
                   <Table.Row>
                     <Table.HeaderCell/>
                     <Table.HeaderCell colSpan='2'>
-                    <Table.Cell>Total Pay: ${CalculatePayPeriods(26,CalculateYearlyDeduction(values)["TOTAL_COST"].toFixed(2))
+                    <Table.Cell>Total Pay: ${CalculatePayPeriods(26,values)
                     .reduce(
                       ( accumulator, currentValue ) =>
                       accumulator + Number(EMPLOYEE_PAY - currentValue), 0

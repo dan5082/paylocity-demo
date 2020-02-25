@@ -15,7 +15,12 @@ function ApplyDiscount(name, price){
   }
 }
 
- function CalculatePayPeriods(numPeriods,yearlyDeduction){
+ function CalculatePayPeriods(numPeriods,data){
+
+  var yearlyDeduction = 0.00;
+  CalculateYearlyDeduction(data).filter(pair => Object.keys(pair)[0] === "TOTAL_COST").forEach(pair =>
+      yearlyDeduction = pair["TOTAL_COST"]
+  )
 
   var deductions = []
   for(var i = numPeriods; i >= 1; i--){
@@ -30,9 +35,13 @@ function ApplyDiscount(name, price){
 
 export default function CalculateYearlyDeduction(data){
   var costDict = {};
+  var costList = [];
   if ("employee" in data && data["employee"] !== undefined){
       // each employee pays a base of $1000 dollars
       costDict[data["employee"]] = ApplyDiscount(data["employee"], EMPLOYEE_COST)
+      costList.push(costDict)
+      console.log(costList)
+      costDict = {}
   }
 
   if ("dependents" in data && data["dependents"] !== undefined){
@@ -41,17 +50,20 @@ export default function CalculateYearlyDeduction(data){
       for (var i = 0; i < deps.length; i++){
         if (deps[i] !== null && deps[i] !== undefined && deps[i]["depName"] !== undefined){
           costDict[deps[i]["depName"]] = ApplyDiscount(deps[i]["depName"],DEPENDENT_COST)
+          costList.push(costDict)
+          costDict = {}
         }
       }
   }
 
-  // apply dicounts to those who are eligible
-  var totalCost = 0
-  for (var personOnAccount in costDict) {
-    totalCost += costDict[personOnAccount]
-  }
-  costDict["TOTAL_COST"] = totalCost
-  return costDict
+  // calculate the TOTAL_COST
+  var totalCost = 0.00
+  costList.forEach(personOnAccount =>
+    totalCost += personOnAccount[Object.keys(personOnAccount)[0]]
+  )
+  costDict["TOTAL_COST"] = totalCost.toFixed(2)
+  costList.push(costDict)
+  return costList
 }
 
 export {CalculatePayPeriods, CalculateYearlyDeduction,EMPLOYEE_PAY,DEPENDENT_COST,EMPLOYEE_COST}
