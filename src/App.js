@@ -5,7 +5,7 @@ import arrayMutators from 'final-form-arrays'
 import { FieldArray } from 'react-final-form-arrays'
 import { Table, Card } from "semantic-ui-react";
 import 'semantic-ui-css/semantic.min.css';
-import {CalculateYearlyDeduction,CalculatePayPeriods,EMPLOYEE_COST,DEPENDENT_COST,EMPLOYEE_PAY} from './deductions.js'
+import {CalculateYearlyDeduction,CalculatePayPeriods,EMPLOYEE_PAY} from './deductions.js'
 
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
 
